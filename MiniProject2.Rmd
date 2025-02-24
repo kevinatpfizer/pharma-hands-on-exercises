@@ -45,7 +45,16 @@ library(rio)
 2.  Read in the CDISC adsl data from the GitHub location (`https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt`) and assign this to an object in R using the assignment operator `<-`. Make sure that the URL location is a character string by enclosing it in `" "`. The `rio` package has a function called `import` that reads data into R and infers the data type from the file name. The first argument of that function is `file`. Paste the file path / URL above after the `file=` argument in the code below, then run the chunk using the green arrow.
 
 ```{r read_adsl_data}
-adsl <- import( file = ""  )
+# # Found as is
+# adsl <- import( file = ""  )
+# adsl
+```
+
+```{r read_adsl_data modified}
+# Read ADSL
+adsl <- import(file ="https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adsl.xpt")
+
+# View object
 adsl
 ```
 
@@ -69,10 +78,25 @@ If you are unsure, try each option by pasting in the filter statement after the 
 ------------------------------------------------------------------------
 
 ```{r create_adsl_saf}
-adsl_eff <-   adsl %>%
-  filter(  )
+# # Found as is
+# adsl_eff <-   adsl %>%
+#   filter(  )
+# adsl_eff
+```
+
+```{r create_adsl_saf modified}
+# Write the correct answer
+filter(.data = adsl, EFFFL == "Y")
+
+# Simplify the code
+adsl_eff <- 
+  adsl %>%
+  filter(EFFFL == "Y")
+
+# View object
 adsl_eff
 ```
+
 
 After filtering out the data we now have 234 rows and 48 columns.
 
@@ -91,9 +115,17 @@ In the R chunk below, we start with the `adsl_eff` dataset and count the number 
 In the next code chunk we want to calculate the number of observations within each level of the treatment variable `TRT01A`. The {dplyr} package has a function called `count()` that will do just that. Add the treatment variable `TRT01A` to the `group_by()` function in the code below to calculate the number of observations for each treatment group.
 
 ```{r group_by}
+# # Found as is
+# adsl_eff %>%
+#   group_by( ) %>%
+#   count(name = "N")
+```
+
+```{r group_by modified}
+# Subset data, then obtain summary statistics
 adsl_eff %>%
-  group_by( ) %>%
-  count(name = "N")
+  group_by(TRT01A) %>%
+  count(name="N")
 ```
 
 What happens if you comment out the group_by() statement in the code above? (HINT: Comment out code using `#` at the start of the line to be commented, or place the cursor on the line / highlight the line and use the shortcut CTRL+SHIFT+C).
@@ -101,31 +133,60 @@ What happens if you comment out the group_by() statement in the code above? (HIN
 Whenever you use `group_by()` R will carry along the grouping variables into the output. In this example, it's useful to have both the numeric value for the treatment in period 1 `TRT01AN` ***and*** the label `TRT01A`. This is because we will want to use the numeric value for sorting, and the label for printing in the final table. Notice in this case since there is a 1:1 relationship between `TRT01AN` and `TRT01A` we get the same answer as before.
 
 ```{r big_N}
-Big_N_cnt <- adsl_eff %>%
-  group_by(   ) %>%
-  count(name = "N")
-Big_N_cnt
+# # Found as is
+# Big_N_cnt <- adsl_eff %>%
+#   group_by(   ) %>%
+#   count(name = "N")
+# Big_N_cnt
 ```
 
+```{r big_N modified}
+# Subset data, then obtain summary statistics
+Big_N_cnt <- 
+  adsl_eff %>%
+  group_by(TRT01AN, TRT01A) %>%
+  count(name="N")
+
+# View object
+Big_N_cnt
+```
 4.  Next we want to calculate the "small n" counts within each category of the `SEX` variable ***within*** each treatment arm.
 
     If we add the additional variable into the `group_by()` then we calculate the count of observations for each unique combination of the levels of those variables. Let's amend the code above to add the variable `SEX`.
 
 ```{r small_n}
-small_n_cnt <- adsl_eff %>%
-  group_by( TRT01AN, TRT01A,  ) %>%
-  count(name = "n")
-small_n_cnt
+# # Found as is
+# small_n_cnt <- adsl_eff %>%
+#   group_by( TRT01AN, TRT01A,  ) %>%
+#   count(name = "n")
+# small_n_cnt
 ```
 
+```{r small_n modified}
+# Subset data, the obtain summary statistics
+small_n_cnt <- 
+  adsl_eff %>%
+  group_by(TRT01AN, TRT01A, SEX) %>%
+  count(name="n")
+
+# View object
+small_n_cnt
+```
 Do we get different answers if we use the `group_by()` variables in a different order?
 
 ```{r change_group_order}
-adsl_eff %>%
-  group_by(  ) %>%
-  count(name = "n")
+# # Found as is
+# adsl_eff %>%
+#   group_by(  ) %>%
+#   count(name = "n")
 ```
 
+```{r change_group_order modified}
+# Subset data, then obtain summary statistics
+adsl_eff %>%
+  group_by(SEX, TRT01A, TRT01AN) %>%
+  count(name = "n")
+```
 No. But the order of variables in columns in the output is changed.
 
 5.  Merging "Big_N\_cnt" and "small_n\_cnt" before calculating percentages...
@@ -135,8 +196,19 @@ The {dplyr} package gives R users "SQL-like" functionality to join or filter two
 In the next step we're going to use `left_join` to combine the left hand dataset - `small_n_cnt` with the right hand dataset `Big_N_cnt`. This will ensure that all entries from the left hand dataset are present in the resulting data object. A little bit of care is required to think about which dataset should be on the left, and which on the right...
 
 ```{r left_join}
-adsl_mrg_cnt <- small_n_cnt %>%
+# # Found as is
+# adsl_mrg_cnt <- small_n_cnt %>%
+#   left_join(Big_N_cnt)
+# adsl_mrg_cnt
+```
+
+```{r left_join modified}
+# Join datasets
+adsl_mrg_cnt <- 
+  small_n_cnt %>%
   left_join(Big_N_cnt)
+
+# View object
 adsl_mrg_cnt
 ```
 
@@ -145,6 +217,7 @@ Notice that rows in `Big_N_cnt` that have matching `TRT01A` and `TRT01AN` are ma
 If you *need* to, you can explicitly define which variables to join by, and identify the joining variables in each dataset:
 
 ```{r}
+# Join datasets
 small_n_cnt %>%
   left_join(Big_N_cnt, by = c("TRT01A", "TRT01AN"))
 ```
@@ -156,6 +229,7 @@ For more information on joining data, see this vignette: <https://dplyr.tidyvers
 For this step, we want to create a new column in the `adsl_mrg_cnt` dataset containing the percentage of observations (subjects in the trial) from each `SEX` within each treatment group given by `TRT01A` or `TRT01AN`. The {dplyr} package allows us to add a new variable to an existing dataset and determine its values based on existing columns using a function called `mutate()`.
 
 ```{r mutate}
+# Compute percentages
 adsl_mrg_cnt %>%
   mutate(perc = (n/N)*100)
 ```
@@ -173,7 +247,10 @@ Notice that in the data above, the first two percentages have many decimal place
 To investigate this, let's look at a few example values
 
 ```{r rounding}
+# Create vector
 x <- c(1.1, 1.499, 1.5,1.9, 2.5)
+
+# Round values
 round(x)
 ```
 
@@ -186,6 +263,7 @@ There are also differences between SAS and R in calculation of percentiles / qua
 To round the values for our table, we want to use the `round()` function within `mutate()` function that calculates the new variable `perc` :
 
 ```{r mutate_and_round}
+# Compute percentages, then round values
 adsl_mrg_cnt %>%
   mutate(perc = round((n/N)*100, digits=1))
 ```
@@ -195,6 +273,7 @@ adsl_mrg_cnt %>%
 When we use numeric values in tables, we want to ensure that the values in the table will have consistent presentation, so one decimal place is used for both "20.0" and "26.1" (instead of "20.0" becoming "20"). We can easily achieve this by applying print formatting and turning the numeric values into character. In R we use the `format()` function to achieve this. The `format()` function argument `nsmall` defines the minimal number of decimal places to be used. So setting `nsmall=1` will ensure that all values are formatted to at least 1 decimal place.
 
 ```{r formatting}
+# Format display
 adsl_mrg_cnt %>%
   mutate(perc = round((n/N)*100, digits=1)) %>%
   mutate(perc_char = format(perc, nsmall=1))
@@ -211,6 +290,7 @@ For presentation in the table, we usually want to show both the count and its as
 Can you predict what you'll see for each of the code chunks below? Have a think *first* then run the code to check whether you're right.
 
 ```{r}
+# Generate display
 n <- 6
 perc_char <- "26.1"
 
@@ -218,18 +298,22 @@ paste(n, "(",perc_char,")")
 ```
 
 ```{r}
+# Generate display
 paste(n, paste0("(",perc_char,")"))
 ```
 
 ```{r}
+# Generate display
 paste(n, "(",perc_char,")", sep="")
 ```
 
 ```{r}
+# Generate display
 paste0(n, "(",perc_char,")")
 ```
 
 ```{r}
+# Generate display
 paste0(n, " (",perc_char,")")
 ```
 
@@ -238,6 +322,7 @@ paste0(n, " (",perc_char,")")
 I think that it's clearer to combine `paste` with `paste0` rather than add additional whitespace to characters (which is easy to overlook) or changing the separator (which is another argument).
 
 ```{r}
+# Create display
 adsl_mrg_cnt %>%
   mutate(perc = round((n/N)*100, digits=1)) %>%
   mutate(perc_char = format(perc, nsmall=1)) %>%
@@ -257,6 +342,7 @@ At the minute we have values in the `SEX` variable of "M" and "F". Now, while th
 The `recode()` function will leave any values not included in the left-hand of the `<old> = <new>`as is. The function `case_when()` allows you to recode with a "catch-all" option (essentially like a sequence of if... elseif... else ... statements) and may be more useful in certain circumstances. In this instance with only two values, it's easier to use `recode()`.
 
 ```{r recode}
+# Generate display with recoded values
 adsl_mrg_cnt %>%
   mutate(perc = round((n/N)*100, digits=1)) %>%
   mutate(perc_char = format(perc, nsmall=1)) %>%
@@ -276,6 +362,7 @@ Notice in the data above is still showing that there are groups defined `Groups:
 Before we do the next thing, it's going to be a good idea to "turn off" grouping, otherwise R is going to try to do the next action for each value of the grouping variables.
 
 ```{r ungroup}
+# Ungroup data
 adsl_mrg_cnt %>%
   ungroup()
 ```
@@ -301,19 +388,42 @@ In steps 6, 7, 8 and 9 we have looked at R chunks that merge the data, calculate
 -   `small_n_cnt %>%`
 
 ```{r pipeline}
+# # Found as is
+# # Paste commands above after the "<-" assignment, one per line
+# adsl_mrg_cnt <- 
+#   
+# 
+# # Display this data so we can check it
+# adsl_mrg_cnt
+```
+
+```{r pipeline modified}
 # Paste commands above after the "<-" assignment, one per line
 adsl_mrg_cnt <- 
-  
+  small_n_cnt %>%
+  left_join(Big_N_cnt) %>%
+  mutate(perc = round(n/N*100, digits=1)) %>% 
+  mutate(perc_char = format(perc, nsmall=1)) %>%
+  mutate(npct = paste(n, "(", perc_char, ")" ) ) %>%
+  mutate(SEX = recode(SEX, "M" = "Male", "F" = "Female")) %>%
+  ungroup() %>%
+  select(TRT01A, SEX, npct)
 
 # Display this data so we can check it
 adsl_mrg_cnt
 ```
-
 13. Transpose the data ready for the table
 
 This gets us to the point where the data is ready for the table, but we need to arrange the layout to match our expected table format. To do that we need to transpose the data, and to do this we use the {tidyr} package function `pivot_wider()`. For `pivot_wider()` you need to tell the function which columns provide names of the new (pivoted) columns - `names_from` and which columns provide the values for these columns - `values_from`.
 
 ```{r pivot_wider}
+# # Found as is
+# adsl_mrg_cnt %>%
+#   pivot_wider(names_from = TRT01A, values_from = npct)
+```
+
+```{r pivot_wider}
+# Transpose datas
 adsl_mrg_cnt %>%
   pivot_wider(names_from = TRT01A, values_from = npct)
 ```
@@ -325,16 +435,140 @@ adsl_mrg_cnt %>%
 Repeat the steps above, but add an additional grouping variable to the calculation of Big_N\_cnt and small_n\_cnt - `AGEGRP`. Here's the first step:
 
 ```{r}
-adsl_saf %>%
-  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
-  count(name = "N")
+# # Found as is
+# adsl_saf %>%
+#   group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
+#   count(name = "N")
 ```
 
+```{r}
+# COMMENT: It seems there is a conflict with chunk #[r create_adsl_saf], where adsl_eff is created instead of adsl_saf.
+# COMMENT: These operations will be performed on adsl_eff (already created) and on adsl_saf (to be created).
+
+# Generate display for adsl_eff ---
+
+# Obtain counts for big N
+adsl_eff_bigncount <-
+  adsl_eff %>%
+  # Group by select variables
+  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
+  # Obtain counts
+  count(name = "N")
+
+# Obtain counts for small N
+adsl_eff_smallncount <-
+  adsl_eff %>% 
+  # Group by select variables
+  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1, SEX) %>%
+  # Obtain counts
+  count(name = "n")
+
+# Join datasets and configure display
+adsl_eff_join <-
+  adsl_eff_smallncount %>% 
+  left_join(adsl_eff_bigncount) %>% 
+  mutate(percent=round((n/N*100), digits=1)) %>% 
+  mutate(percent_char=format(percent, nsmall=1)) %>% 
+  mutate(npercent=paste(n, '(', percent_char, ')')) %>% 
+  mutate(SEX=recode(SEX, 'M'='Male', 'F'='Female')) %>% 
+  ungroup() %>% 
+  select(TRT01A, AGEGR1, SEX, npercent)
+
+# Transpose data
+adsl_eff_transpose <-
+  adsl_eff_join %>%
+  pivot_wider(names_from=c(TRT01A), values_from=npercent)  
+
+# View object
+adsl_eff_transpose
+```
+
+```{r}
+# Generate display for adsl_saf ---
+
+# Subset data
+adsl_saf <-
+  adsl %>% 
+  filter(casefold(SAFFL, upper=TRUE) == "Y")
+
+# Obtain counts for big N
+adsl_saf_bigncount <-
+  adsl_saf %>%
+  # Group by select variables
+  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1) %>%
+  # Obtain counts
+  count(name = "N")
+
+# Obtain counts for small N
+adsl_saf_smallncount <-
+  adsl_saf %>% 
+  # Group by select variables
+  group_by(TRT01AN, TRT01A, AGEGR1N, AGEGR1, SEX) %>%
+  # Obtain counts
+  count(name = "n")
+
+# Join datasets and configure display
+adsl_saf_join <-
+  adsl_saf_smallncount %>% 
+  left_join(adsl_saf_bigncount) %>% 
+  mutate(percent=round((n/N*100), digits=1)) %>% 
+  mutate(percent_char=format(percent, nsmall=1)) %>% 
+  mutate(npercent=paste(n, '(', percent_char, ')')) %>% 
+  mutate(SEX=recode(SEX, 'M'='Male', 'F'='Female')) %>% 
+  ungroup() %>% 
+  select(TRT01A, AGEGR1, SEX, npercent)
+
+# Transpose data
+adsl_saf_transpose <-
+  adsl_saf_join %>%
+  pivot_wider(names_from=c(TRT01A), values_from=npercent)  
+
+# View object
+adsl_saf_transpose
+```
 To check that your code is reproducible, you will want to use the "knit" button on the RStudio IDE interface to create an HTML file based on your saved .Rmd file. If your code chunks are reproducible then you should get an HTML file as a result. If NOT (if there's an error or if the "knit" process fails) then click on the arrow to the right of the "Run" button and select "Restart R and Run All Chunks". Then troubleshoot which chunk is causing problems.
 
 ## Challenge 2:
 
 Generate Counts and Percentages of Body Text Term (AEBODSYS) for Safety Population (SAFFL) based on the this CDISC dataset: `adae.xpt`
 
+```{r}
+# Load packages
+library(haven)
+
+# Define dataset path
+adae_path <- c("https://github.com/phuse-org/phuse-scripts/raw/master/data/adam/cdisc/adae.xpt")
+
+# Read ADAE
+adae <- read_xpt(file=adae_path)
+
+# Subset data
+adae_saffl <- 
+  adae %>%  
+  filter(SAFFL=='Y')
+
+# Obtain counts for big N
+adae_saffl_bigncount <-
+  adae_saffl %>%
+  count(name = "N")
+
+# Obtain counts for small N
+adae_saffl_smallncount <-
+  adae_saffl %>%
+  group_by(AEBODSYS) %>% 
+  count(name="n")
+
+# Join datasets and configure display
+adae_saffl_join <-
+  adae_saffl_smallncount %>% 
+  cross_join(adae_saffl_bigncount) %>% 
+  mutate(Percent = as.character(round(x = n/N*100, digits = 1))) %>%
+  mutate(npercent = paste0(n, " (", Percent, ")")) %>%
+  ungroup() %>% 
+  select(-c("N", "n", "Percent"))
+
+# View object
+adae_saffl_join
+```
 
 Save the .RMD file on your desktop and click on the "Knit" button at the top of the file to render an HTML version of this document.
