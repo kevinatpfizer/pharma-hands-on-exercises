@@ -81,7 +81,7 @@ Next filter the adsl dataset where the EFFFL variable has the value "Y" (as we d
 #   mutate(SEX = recode(SEX, "M" = "Male", "F" = "Female")) 
 ```
 
-```{r create_adsl_eff}
+```{r create_adsl_eff modified}
 adsl_eff <- adsl %>%
   filter(EFFFL=='Y') %>%
   mutate(SEX = recode(SEX, "M" = "Male", "F" = "Female")) 
@@ -429,7 +429,7 @@ adsl_saf %>%
 
 The problem here is that R is looking for an object called AGE, which doesn't exist in the current Environment. Instead we need to tell R that the "AGE" argument that we pass should be interpreted within the scope of the data, rather than looking in the Environment. The secret is to enclose or "embrace" the variable in double quotes within the function. It's a bit like using a Macro variable in SAS.
 
-```{r}
+```{r, eval=FALSE}
 varSummary <- function(.data = NULL, variable = NULL) {
   .data %>%
     group_by(TRT01AN,TRT01A,SEX) %>%

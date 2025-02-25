@@ -422,7 +422,7 @@ This gets us to the point where the data is ready for the table, but we need to 
 #   pivot_wider(names_from = TRT01A, values_from = npct)
 ```
 
-```{r pivot_wider}
+```{r pivot_wider modified}
 # Transpose datas
 adsl_mrg_cnt %>%
   pivot_wider(names_from = TRT01A, values_from = npct)
