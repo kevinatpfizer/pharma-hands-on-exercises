@@ -550,22 +550,24 @@ adae_saffl <-
 # Obtain counts for big N
 adae_saffl_bigncount <-
   adae_saffl %>%
+  group_by(TRTAN, TRTA) %>% 
   count(name = "N")
 
 # Obtain counts for small N
 adae_saffl_smallncount <-
   adae_saffl %>%
-  group_by(AEBODSYS) %>% 
+  group_by(TRTAN, TRTA, AEBODSYS) %>% 
   count(name="n")
 
 # Join datasets and configure display
 adae_saffl_join <-
   adae_saffl_smallncount %>% 
-  cross_join(adae_saffl_bigncount) %>% 
+  left_join(adae_saffl_bigncount) %>% 
   mutate(Percent = as.character(round(x = n/N*100, digits = 1))) %>%
   mutate(npercent = paste0(n, " (", Percent, ")")) %>%
   ungroup() %>% 
-  select(-c("N", "n", "Percent"))
+  select(-c("N", "n", "Percent", "TRTAN")) %>% 
+  pivot_wider(names_from=c(TRTA), values_from=npercent)
 
 # View object
 adae_saffl_join
