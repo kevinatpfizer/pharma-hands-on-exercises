@@ -16,12 +16,28 @@ To insert a snippet, in your R script or RMarkdown file, start typing in the nam
 
 
 ```{r function1}
-
+# FOUND AS IS
 ```
+
+```{r function1 modified, error=TRUE, message=TRUE}
+# MODIFIED
+name <- function(variables) {
+  
+}
+```
+
 
 If you select the snippet from the completion list, it will be inserted along with several text placeholders which you can fill in by typing and then pressing Tab to advance to the next placeholder:
 
 ```{r function2}
+# # FOUND AS IS
+# name <- function(variables) {
+#   
+# }
+```
+
+```{r function2 modified, error=TRUE, message=TRUE}
+# MODIFIED
 name <- function(variables) {
   
 }
@@ -44,7 +60,46 @@ If you have typed the character sequence for a snippet and want to insert it imm
 
 
 ```{r common_snip}
+# FOUND AS IS
+```
 
+```{r common_snip modified, error=TRUE, message=TRUE}
+# MODIFIED
+library(package)
+
+require(package)
+
+# source()
+
+# df() 
+
+matrix(data, nrow = rows, ncol = cols)
+
+if (condition) {
+  
+} else if (condition) {
+  
+} else {
+  
+}
+
+apply(array, margin, ...)
+
+lapply(list, function)
+
+sapply(list, function)
+
+library(shiny)
+
+ui <- fluidPage(
+  
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
 ```
 
 ## Customizing Snippets
@@ -53,11 +108,19 @@ Like in SAS Studio, you can also create your own snippets and save them for futu
 You can  get to the snippets file by using the `usethis` package from Console, which has a function `edit_rstudio_snippet()` that will pop open the file for editing.
 
 ```{r usethis}
-install.packages("usethis")
-library(usethis)
-edit_rstudio_snippets(type = c("r"))
+# # FOUND AS IS 
+# install.packages("usethis")
+# library(usethis)
+# edit_rstudio_snippets(type = c("r"))
 ```
 
+```{r usethis modified}
+# FOUND AS IS 
+if (!require('pacman')) install.packages('pacman')
+pacman::p_load(usethis)
+
+edit_rstudio_snippets(type = c("r"))
+```
 This will open up the snippets for R code, but there are several different types of snippets that you can write. Sub in the snippet type you want to edit the snippets. Here is a list of different code types you can write snippets for:
 - "r" 
 - "markdown"
@@ -88,7 +151,7 @@ Click Save and exit the Preferences window. Now, you can use your snippet. In th
 # Header Template
 
 One of the uses for snippets is to create a header template that programmers can use for all of their scripts. Feel free to use this one as a starting point for your own program header.
-```{r header_snip}
+```{r header_snip, error=TRUE, message=TRUE}
 ######################################################################
 #
 #Purpose: To create ${1:plot_type}  Plot
@@ -124,7 +187,7 @@ One of the uses for snippets is to create a header template that programmers can
 # Library Snippet
 This snippet will set your working directory, and then also load whatever packages you need or use most often.
 
-```{r}
+```{r, error=TRUE, message=TRUE}
 ######################################################################
 path1 <- getwd()
 
@@ -141,7 +204,7 @@ library(rmarkdown)
 # Plot Snippet
 If you spend a fair amount of time setting up and adjusting a graph to be just the way you want it, you want to be able to use it again!
 
-```{r}
+```{r, error=TRUE, message=TRUE}
 ######################################################################
 ggplot(${1:data}, aes(x=${2:variable}, y=${3:variable})) + 
   geom_col(color = "black", fill="#0072B2") +
