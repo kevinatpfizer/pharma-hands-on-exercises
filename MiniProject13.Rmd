@@ -9,7 +9,7 @@ date: "2023-05-10"
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Why?
+## Why? 
 Code style helps your colleagues read and understand what your code does (vital for QC) and also helps "future you" to remember what you were doing if and when you revisit code later.  Even if "programmer" is not in your job description, there are certain standards and good practices that you should be aware of to make sure that the code you write can be understood by "future you", or any third party. 
 
 ### TL;DR+ summary:
@@ -116,7 +116,7 @@ adsl_saf = import("https://github.com/phuse-org/phuse-scripts/raw/master/data/ad
   
   BIGNcnt=  adsl_saf   %>%
     group_by(   TRT01AN,TRT01A  ) %>%
-    count(name="N")
+    count(name="N") 
 
   ## Calculating count for each category of SEX
   

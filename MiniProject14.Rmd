@@ -5,7 +5,7 @@ date: "5/15/2023"
 output: html_document
 ---
 
-## Overview
+## Overview 
 
 Code snippets are text macros that are used for quickly inserting common snippets of code. (Similar to the Snippets options on SAS Studio). It can be used for inserting common pieces of code, or for setting up templates for programmers to follow. They are a great way to save time when writing scripts. 
 
@@ -95,7 +95,7 @@ ui <- fluidPage(
   
 )
 
-server <- function(input, output, session) {
+server <- function(input, output, session) { 
   
 }
 
